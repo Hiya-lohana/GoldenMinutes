@@ -8,6 +8,10 @@ export const CommandCenter: React.FC = () => {
   const { emergencies, ambulances, hospitals, navigate, setSelectedEmergencyId } = useEMS();
 
   const activeEmergencies = emergencies.filter((e) => e.status !== 'Handoff Complete');
+  const [filterAcuity, setFilterAcuity] = React.useState<'all' | 'critical'>('all');
+  const displayedEmergencies = filterAcuity === 'critical' 
+    ? activeEmergencies.filter(e => e.priority === 'critical') 
+    : activeEmergencies;
   const criticalCount = activeEmergencies.filter((e) => e.priority === 'critical').length;
   const enRouteAmbulances = ambulances.filter((a) => a.status === 'En Route').length;
   const onlineHospitals = hospitals.filter((h) => h.status === 'Online').length;
@@ -151,13 +155,29 @@ export const CommandCenter: React.FC = () => {
               {activeEmergencies.length} Under Management
             </span>
           </div>
-          <button
-            onClick={() => navigate('/dispatcher/requests')}
-            className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 cursor-pointer"
-          >
-            <span>View All Active Requests</span>
-            <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-          </button>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+              <button
+                onClick={() => setFilterAcuity('all')}
+                className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${filterAcuity === 'all' ? 'bg-white text-slate-800 shadow-xs' : 'text-slate-500 hover:text-slate-800'}`}
+              >
+                All ({activeEmergencies.length})
+              </button>
+              <button
+                onClick={() => setFilterAcuity('critical')}
+                className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${filterAcuity === 'critical' ? 'bg-rose-600 text-white shadow-xs' : 'text-rose-600 hover:bg-rose-50'}`}
+              >
+                Code Red ({criticalCount})
+              </button>
+            </div>
+            <button
+              onClick={() => navigate('/dispatcher/requests')}
+              className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 cursor-pointer"
+            >
+              <span>View All Active Requests</span>
+              <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+            </button>
+          </div>
         </div>
 
         {/* Clean Table */}
@@ -177,7 +197,7 @@ export const CommandCenter: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {activeEmergencies.map((em) => (
+              {displayedEmergencies.map((em) => (
                 <tr
                   key={em.id}
                   onClick={() => handleRowClick(em)}
