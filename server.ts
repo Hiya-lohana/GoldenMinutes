@@ -22,6 +22,21 @@ const ai = new GoogleGenAI({
 });
 
 /**
+ * Endpoint: GET /api/health
+ * Diagnostics endpoint verifying server status, Gemini API readiness, and service uptime.
+ */
+app.get('/api/health', (_req, res) => {
+  res.json({
+    status: 'operational',
+    service: 'GoldenMinutes EOC Core Engine',
+    geminiConfigured: Boolean(process.env.GEMINI_API_KEY),
+    fallbackEngine: 'active',
+    timestamp: new Date().toISOString(),
+    uptimeSeconds: Math.floor(process.uptime()),
+  });
+});
+
+/**
  * Endpoint: POST /api/summarize-handover
  * Summarizes ambulance audio dictation into a structured clinical SBAR handover using Gemini 3.8 Flash.
  */
