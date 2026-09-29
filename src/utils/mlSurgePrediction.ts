@@ -265,3 +265,14 @@ export function calculateSurgePredictions(
     isPreStaged,
   };
 }
+
+/**
+ * Evaluates the composite clinical acuity risk index (0 - 100)
+ * derived from expected ESI-1 (resuscitation) and ESI-2 (emergent) distributions.
+ */
+export function calculateAcuityRiskIndex(prediction: HourlyInflowPrediction): number {
+  const criticalWeight = prediction.acuityBreakdown.esi1Critical * 3.0;
+  const emergentWeight = prediction.acuityBreakdown.esi2Emergent * 1.8;
+  const rawIndex = ((criticalWeight + emergentWeight) / Math.max(prediction.predictedCount, 1)) * 35;
+  return Math.min(Math.round(rawIndex), 100);
+}
