@@ -64,6 +64,28 @@ export const ResourceManager: React.FC = () => {
               </div>
             </div>
 
+            {/* Live Utilization Meter */}
+            {(() => {
+              const total = res.available + res.reserved + res.occupied + res.maintenance;
+              const utilRate = total > 0 ? Math.round(((res.occupied + res.reserved) / total) * 100) : 0;
+              return (
+                <div className="flex flex-col gap-1.5 py-1">
+                  <div className="flex justify-between text-[11px] text-slate-500 font-semibold">
+                    <span>Active Commitment Rate</span>
+                    <span className={utilRate > 85 ? 'text-rose-600 font-bold' : utilRate > 65 ? 'text-amber-600 font-bold' : 'text-slate-700 font-bold'}>
+                      {utilRate}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${utilRate > 85 ? 'bg-rose-500' : utilRate > 65 ? 'bg-amber-500' : 'bg-emerald-500'}`}
+                      style={{ width: `${utilRate}%` }}
+                    ></div>
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* Operational Modifiers */}
             <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
               <span className="font-bold text-slate-700 text-[11px]">Adjust Available:</span>
