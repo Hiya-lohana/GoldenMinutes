@@ -36,7 +36,7 @@ Today, emergency medical services face severe operational fragmentation:
 | :--- | :--- |
 | **Tactical EOC Command Center** | Deep navy/charcoal high-density dashboard featuring live incident streams, real-time audio triage klaxons, and telemetry cards. |
 | **Interactive GIS Dispatch Map** | Leaflet-powered GIS mapping displaying ambulance units, telemetry vectors, hospital nodes, traffic corridors, and active roadblocks. |
-| **Multi-Factor Hospital Ranking** | Algorithmic scoring weighting resource match ($35\%$), travel time ($35\%$), data freshness ($20\%$), and hospital reliability ($10\%$). |
+| **Multi-Factor Hospital Ranking** | Algorithmic scoring weighting resource match (35%), travel time (35%), data freshness (20%), and hospital reliability (10%). |
 | **Stale Data Degradation Engine** | Automatic penalization and amber warning badges for hospital telemetry older than 60 seconds to prevent routing to phantom beds. |
 | **Atomic Bed Reservation System** | 60-second lock timers ensuring guaranteed bed availability upon ambulance arrival without duplicate claims. |
 | **Double-Booking Collision Simulation** | Interactive demonstration showing simultaneous requests from Medic 04 and Medic 08, demonstrating instant lock collision prevention and failover. |
@@ -300,9 +300,9 @@ GoldenMinutes/
 
 | Member | GitHub Handle | Primary Responsibilities & Contributions |
 | :--- | :--- | :--- |
-| **Ashmith Aahirwar** *(Team Lead)* | [@Ashcraft30](https://github.com/Ashcraft30) | **Frontend & EOC Command Center Lead:** Built the core high-density EOC Command Center, responsive app shell, tactical sidebar, header telemetry, live incident cards, StatusBadge design system, and Leaflet GIS MapCanvas integration. |
+| **Hiya Lohana** *(Team Lead)* | [@Hiya-lohana](https://github.com/Hiya-lohana) | **Project Lead & Dispatch / AI Specialist:** Overall project leadership and coordination, CAD New Request intake workflow, multi-factor destination ranking algorithm, 4-hour ML surge prediction engine (Poisson regression model), and roadblock bypass routing. |
+| **Ashmith Aahirwar** | [@Ashcraft30](https://github.com/Ashcraft30) | **Frontend & EOC Command Center Lead:** Built the tactical high-density EOC Command Center, responsive app shell, tactical sidebar, header telemetry, live incident cards, StatusBadge design system, and Leaflet GIS MapCanvas integration. |
 | **Aditya Lulla** | [@Aditya71310](https://github.com/Aditya71310) | **Hospital & Resource Management Lead:** Built the Hospital ED Overview, real-time Resource Manager (ICU/Cath/Trauma beds), 60-second atomic reservation hold system, accept/reject workflows, double-booking collision demo, and staleness handling. |
-| **Hiya Lohana** | [@Hiya-lohana](https://github.com/Hiya-lohana) | **Dispatch Optimization, Routing & AI/ML Lead:** Built the CAD New Request intake workflow, multi-factor destination ranking algorithm ($Score$ weights), 4-hour ML surge prediction engine (Poisson regression model), and roadblock bypass routing. |
 | **Kashish Bagde** | [@kashishbagde14](https://github.com/kashishbagde14) | **Backend, Security, Data Layer & Documentation:** Built the Node/Express server, Gemini 3.8/3.1 Flash AI SBAR handover API with heuristic fallback, RBAC authentication (AuthContext), Firestore security rules (`firestore.rules`), seed datasets, and comprehensive technical documentation. |
 
 ---
