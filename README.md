@@ -34,15 +34,16 @@ Today, emergency medical services face severe operational fragmentation:
 
 | Feature | Description |
 | :--- | :--- |
-| **Tactical EOC Command Center** | Deep navy/charcoal high-density dashboard featuring live incident streams, real-time audio triage klaxons, and telemetry cards. |
-| **Interactive GIS Dispatch Map** | Leaflet-powered GIS mapping displaying ambulance units, telemetry vectors, hospital nodes, traffic corridors, and active roadblocks. |
-| **Multi-Factor Hospital Ranking** | Algorithmic scoring weighting resource match (35%), travel time (35%), data freshness (20%), and hospital reliability (10%). |
-| **Stale Data Degradation Engine** | Automatic penalization and amber warning badges for hospital telemetry older than 60 seconds to prevent routing to phantom beds. |
-| **Atomic Bed Reservation System** | 60-second lock timers ensuring guaranteed bed availability upon ambulance arrival without duplicate claims. |
-| **Double-Booking Collision Simulation** | Interactive demonstration showing simultaneous requests from Medic 04 and Medic 08, demonstrating instant lock collision prevention and failover. |
-| **Gemini AI Voice-to-SBAR Handover** | Real-time voice dictation parsed by Gemini Flash into structured clinical handovers with drug dosages, vital signs, and priority acuity codes. |
-| **ML ED Surge Forecaster** | Time-series Poisson regression projecting 4-hour inflow spikes, acuity distributions (ESI 1-5), and equipment requirements. |
-| **Dual-Mode Persistence** | Zero-configuration instant local demo mode paired with real-time Firebase Firestore synchronization. |
+| **Emergency Operations Center (EOC) Dashboard** | Bloomberg-terminal inspired high-density command center with deep navy/charcoal background, white cards, live incident panels, and real-time emergency overview. |
+| **Intelligent Routing & Resource Matching** | Dynamic destination recommendation considering resource availability (ICU beds, trauma bays, cath labs), real-time travel time, and data freshness. |
+| **Data Freshness & Stale-Data Handling** | Continuously monitors telemetry freshness; flags stale data (>60s) with amber warning indicators and penalizes routing scores to prevent phantom bed assignments. |
+| **Hospital Resource Management** | Live bed and equipment availability management (ICU Beds, Emergency Resus, Ventilators, Cath Labs, Trauma Bays) with instant status updates. |
+| **Assignment → Reservation → Handoff Workflow** | Complete emergency lifecycle: CAD dispatch assignment, 60-second atomic reservation hold, en-route telemetry tracking, and bedside handoff completion. |
+| **Double-Booking Prevention Logic** | Atomic resource locks ensuring beds cannot be claimed simultaneously by multiple ambulances, with automated conflict detection and failover rerouting. |
+| **Hospital Accept / Reject Workflow** | Emergency department staff can review incoming emergency requests, evaluate patient vitals, and accept or reject with reason codes. |
+| **Role-Based Access Control (RBAC)** | Role-tailored views and access controls for Dispatchers (EOC operations) and Hospital Staff (emergency department & resource control). |
+| **Interactive Dispatch Map & Fleet Tracking** | Real-time Leaflet map displaying active ambulance locations, hospital destinations, green corridors, and dynamic roadblock rerouting. |
+| **Voice-to-Clinical SBAR Handover AI** | Converts in-transit paramedic voice dictations into structured clinical SBAR (Situation, Background, Assessment, Recommendation) notes powered by Gemini AI with offline fallback. |
 
 ---
 
@@ -141,14 +142,15 @@ The application enforces strict Role-Based Access Control (RBAC):
 
 ---
 
-## ⚡ Emergency Lifecycle & Workflows
+## ⚡ Emergency Workflow: Assignment → Reservation → Handoff
 
-1. **CAD Incident Creation:** Dispatcher logs condition, acuity, location, and required resources.
-2. **Multi-Factor Destination Ranking:** System evaluates regional facilities based on resource match, travel time, and data freshness.
-3. **Atomic 60s Reservation Hold:** Prevents collisions; locks designated bed while ambulance is en route.
-4. **Voice-to-SBAR Handover:** Paramedics transmit in-transit telemetry and voice briefing parsed by Gemini AI.
-5. **Dynamic Transit Navigation:** Ambulances track routes with automated green corridor rerouting around arterial obstructions.
-6. **Hospital ED Confirmation & Handoff:** Receiving medical center verifies patient intake and marks handoff complete.
+1. **CAD Incident Creation & Triage:** Dispatcher logs incoming emergency condition, priority level, location, and required medical resources.
+2. **Resource Matching & Destination Ranking:** System algorithmically ranks regional facilities based on resource match, real-time travel time, data freshness, and reliability.
+3. **Dispatch & Assignment:** Paramedic unit is assigned to the incident with turn-by-turn routing telemetry.
+4. **Atomic 60s Resource Reservation:** Dispatcher or paramedic locks the designated bed/resource, preventing double-booking while in transit.
+5. **In-Transit SBAR Handover:** Paramedics transmit in-transit telemetry and voice briefings parsed into structured SBAR notes by Gemini AI.
+6. **Hospital ED Confirmation:** Receiving emergency department reviews telemetry, pre-alerts specialist teams, and confirms resource availability.
+7. **Arrival & Definitive Handoff:** Ambulance arrives under green-corridor routing, patient is directly admitted to the reserved bed, and handoff is marked complete.
 
 ---
 
