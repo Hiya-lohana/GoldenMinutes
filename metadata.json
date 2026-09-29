@@ -1,0 +1,6 @@
+{
+  "name": "GoldenMinutes EMS Coordination",
+  "description": "Real-time ambulance-to-hospital emergency coordination platform. Every second matters. Every resource counts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

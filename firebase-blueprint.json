@@ -1,0 +1,158 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Authenticated user profile and role assignment",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "displayName": { "type": "string", "maxLength": 128 },
+        "photoURL": { "type": "string", "maxLength": 512 },
+        "role": { "type": "string", "enum": ["dispatcher", "hospital"] },
+        "assignedFacility": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Emergency": {
+      "title": "Emergency",
+      "description": "Emergency incident request and CAD triage status",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "condition": { "type": "string", "maxLength": 256 },
+        "priority": { "type": "string", "enum": ["critical", "urgent", "stable"] },
+        "requiredResource": { "type": "string", "maxLength": 128 },
+        "location": { "type": "string", "maxLength": 256 },
+        "patientCount": { "type": "number" },
+        "assignedAmbulanceId": { "type": "string", "maxLength": 64 },
+        "assignedHospitalId": { "type": "string", "maxLength": 64 },
+        "assignedBedId": { "type": "string", "maxLength": 64 },
+        "status": {
+          "type": "string",
+          "enum": [
+            "Searching",
+            "Awaiting Hospital",
+            "Resource Held",
+            "Confirmed",
+            "En Route",
+            "Arrived",
+            "Handoff Complete"
+          ]
+        },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "timeElapsedSeconds": { "type": "number" },
+        "etaMinutes": { "type": "number" },
+        "protocolStep": { "type": "string", "maxLength": 128 },
+        "createdBy": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["id", "condition", "priority", "status"]
+    },
+    "Hospital": {
+      "title": "Hospital",
+      "description": "Hospital facility availability, resources, and live telemetry",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "name": { "type": "string", "maxLength": 128 },
+        "tier": { "type": "string", "maxLength": 64 },
+        "address": { "type": "string", "maxLength": 256 },
+        "distanceMiles": { "type": "number" },
+        "baseEtaMinutes": { "type": "number" },
+        "currentEtaMinutes": { "type": "number" },
+        "status": { "type": "string", "enum": ["Online", "Busy", "Diversion Active"] },
+        "cadScore": { "type": "number" },
+        "lastUpdatedSecondsAgo": { "type": "number" },
+        "isStale": { "type": "boolean" },
+        "openCathBays": { "type": "number" },
+        "traumaBaysAvailable": { "type": "number" },
+        "onCallCardiologist": { "type": "string", "maxLength": 128 },
+        "onCallTraumaSurgeon": { "type": "string", "maxLength": 128 },
+        "activeRequestsCount": { "type": "number" }
+      },
+      "required": ["id", "name", "status"]
+    },
+    "Ambulance": {
+      "title": "Ambulance",
+      "description": "EMS emergency ambulance unit telemetry and dispatch tracking",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "name": { "type": "string", "maxLength": 64 },
+        "callSign": { "type": "string", "maxLength": 64 },
+        "type": { "type": "string", "enum": ["ALS-1", "ALS-2", "BLS", "Critical Care"] },
+        "leadParamedic": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "enum": ["Available", "Dispatched", "En Route", "At Hospital", "Offline"] },
+        "location": { "type": "string", "maxLength": 256 },
+        "speedMph": { "type": "number" },
+        "heading": { "type": "number" },
+        "assignedEmergencyId": { "type": "string", "maxLength": 64 },
+        "destinationHospitalId": { "type": "string", "maxLength": 64 },
+        "etaMinutes": { "type": "number" },
+        "distanceMiles": { "type": "number" }
+      },
+      "required": ["id", "name", "callSign", "status"]
+    },
+    "Reservation": {
+      "title": "Reservation",
+      "description": "Hospital bed and critical care resource reservation hold",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "emergencyId": { "type": "string", "maxLength": 64 },
+        "hospitalId": { "type": "string", "maxLength": 64 },
+        "hospitalName": { "type": "string", "maxLength": 128 },
+        "resourceName": { "type": "string", "maxLength": 128 },
+        "resourceBed": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "expiresInSeconds": { "type": "number" },
+        "status": { "type": "string", "enum": ["AVAILABLE", "REQUESTED", "HELD", "CONFIRMED", "REJECTED", "EXPIRED"] },
+        "assignedToAmbulance": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "emergencyId", "hospitalId", "status"]
+    },
+    "ActivityLog": {
+      "title": "ActivityLog",
+      "description": "Real-time dispatch coordination audit trail",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "timestamp": { "type": "string", "maxLength": 64 },
+        "timeAgo": { "type": "string", "maxLength": 64 },
+        "type": { "type": "string", "enum": ["emergency", "reservation", "hospital", "route", "ambulance", "handoff"] },
+        "title": { "type": "string", "maxLength": 256 },
+        "description": { "type": "string", "maxLength": 512 },
+        "role": { "type": "string", "enum": ["all", "dispatcher", "hospital"] }
+      },
+      "required": ["id", "timestamp", "type", "title"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Stores user profiles with role and facility assignment"
+    },
+    "/emergencies/{emergencyId}": {
+      "schema": "Emergency",
+      "description": "Stores emergency dispatch requests and their progression"
+    },
+    "/hospitals/{hospitalId}": {
+      "schema": "Hospital",
+      "description": "Stores hospital live resource capacity and readiness metrics"
+    },
+    "/ambulances/{ambulanceId}": {
+      "schema": "Ambulance",
+      "description": "Stores active EMS fleet locations and telemetry"
+    },
+    "/reservations/{reservationId}": {
+      "schema": "Reservation",
+      "description": "Stores resource reservations and anti-double-booking locks"
+    },
+    "/activities/{activityId}": {
+      "schema": "ActivityLog",
+      "description": "Stores chronological coordination activity log entries"
+    }
+  }
+}

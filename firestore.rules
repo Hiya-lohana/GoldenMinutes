@@ -1,0 +1,115 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net (Pillar 1)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions (Pillar 3 & 4)
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'email', 'role']) &&
+             data.uid is string && data.uid.size() <= 128 &&
+             data.email is string && data.email.size() <= 256 &&
+             (data.role == 'dispatcher' || data.role == 'hospital');
+    }
+
+    function isValidEmergency(data) {
+      return data.keys().hasAll(['id', 'condition', 'priority', 'status']) &&
+             data.id is string && data.id.size() <= 64 &&
+             data.condition is string && data.condition.size() <= 256 &&
+             (data.priority == 'critical' || data.priority == 'urgent' || data.priority == 'stable') &&
+             (data.status in ['Searching', 'Awaiting Hospital', 'Resource Held', 'Confirmed', 'En Route', 'Arrived', 'Handoff Complete']);
+    }
+
+    function isValidHospital(data) {
+      return data.keys().hasAll(['id', 'name', 'status']) &&
+             data.id is string && data.id.size() <= 64 &&
+             data.name is string && data.name.size() <= 128 &&
+             (data.status in ['Online', 'Busy', 'Diversion Active']);
+    }
+
+    function isValidAmbulance(data) {
+      return data.keys().hasAll(['id', 'name', 'callSign', 'status']) &&
+             data.id is string && data.id.size() <= 64 &&
+             data.name is string && data.name.size() <= 64 &&
+             data.callSign is string && data.callSign.size() <= 64 &&
+             (data.status in ['Available', 'Dispatched', 'En Route', 'At Hospital', 'Offline']);
+    }
+
+    function isValidReservation(data) {
+      return data.keys().hasAll(['id', 'emergencyId', 'hospitalId', 'status']) &&
+             data.id is string && data.id.size() <= 64 &&
+             data.emergencyId is string && data.emergencyId.size() <= 64 &&
+             data.hospitalId is string && data.hospitalId.size() <= 64 &&
+             (data.status in ['AVAILABLE', 'REQUESTED', 'HELD', 'CONFIRMED', 'REJECTED', 'EXPIRED']);
+    }
+
+    function isValidActivity(data) {
+      return data.keys().hasAll(['id', 'timestamp', 'type', 'title']) &&
+             data.id is string && data.id.size() <= 64 &&
+             data.timestamp is string && data.timestamp.size() <= 64 &&
+             data.title is string && data.title.size() <= 256 &&
+             (data.type in ['emergency', 'reservation', 'hospital', 'route', 'ambulance', 'handoff']);
+    }
+
+    // Collections
+    match /users/{userId} {
+      allow get: if isSignedIn() && isValidId(userId);
+      allow list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(userId) && request.auth.uid == userId && isValidUser(incoming());
+      allow update: if isSignedIn() && isValidId(userId) && request.auth.uid == userId && isValidUser(incoming());
+    }
+
+    match /emergencies/{emergencyId} {
+      allow get: if isSignedIn() && isValidId(emergencyId);
+      allow list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(emergencyId) && isValidEmergency(incoming());
+      allow update: if isSignedIn() && isValidId(emergencyId) && isValidEmergency(incoming());
+    }
+
+    match /hospitals/{hospitalId} {
+      allow get: if isSignedIn() && isValidId(hospitalId);
+      allow list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(hospitalId) && isValidHospital(incoming());
+      allow update: if isSignedIn() && isValidId(hospitalId) && isValidHospital(incoming());
+    }
+
+    match /ambulances/{ambulanceId} {
+      allow get: if isSignedIn() && isValidId(ambulanceId);
+      allow list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(ambulanceId) && isValidAmbulance(incoming());
+      allow update: if isSignedIn() && isValidId(ambulanceId) && isValidAmbulance(incoming());
+    }
+
+    match /reservations/{reservationId} {
+      allow get: if isSignedIn() && isValidId(reservationId);
+      allow list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(reservationId) && isValidReservation(incoming());
+      allow update: if isSignedIn() && isValidId(reservationId) && isValidReservation(incoming());
+    }
+
+    match /activities/{activityId} {
+      allow get: if isSignedIn() && isValidId(activityId);
+      allow list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(activityId) && isValidActivity(incoming());
+    }
+  }
+}
